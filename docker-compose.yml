@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
+    volumes:
+      - .:/var/www/html
+    environment:
+      - DB_HOST=db
+      - DB_NAME=graficos_ot
+      - DB_USER=root
+      - DB_PASSWORD=root123
+
+  db:
+    image: mariadb:10.6
+    environment:
+      MYSQL_DATABASE: graficos_ot
+      MYSQL_ROOT_PASSWORD: root123
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./config/graficos_ot_mdb.sql:/docker-entrypoint-initdb.d/init.sql
+
+volumes:
+  db_data:
