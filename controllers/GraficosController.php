@@ -24,6 +24,10 @@ try {
         case 'ordenes-por-prioridad':
             $result = handleOrdenesPorPrioridad($model);
             break;
+            
+        case 'ordenes-por-modo':
+            $result = handleOrdenesPorModo($model);
+            break;
         
         default:
             throw new Exception('Acción no válida: ' . $action);
@@ -95,6 +99,45 @@ function handleOrdenesPorPrioridad($model) {
         'chart_type' => 'bar',
         'timestamp' => date('Y-m-d H:i:s')
     ];
+}
+
+/**
+ * Manejar gráfico de órdenes por modo (recursos internos vs externos)
+ */
+function handleOrdenesPorModo($model) {
+    $datos = $model->getOrdenesPorModo();
+    
+    if (empty($datos)) {
+        throw new Exception('No se encontraron datos de órdenes por modo');
+    }
+    
+    $chartData = array_map(function($item) {
+        return [
+            'name' => $item['modo_nombre'],
+            'y' => (int) $item['cantidad'],
+            'modo_id' => (int) $item['modo'],
+            'color' => getModoColor((int) $item['modo'])
+        ];
+    }, $datos);
+    
+    return [
+        'success' => true,
+        'data' => $chartData,
+        'total' => array_sum(array_column($chartData, 'y')),
+        'chart_type' => 'pie',
+        'timestamp' => date('Y-m-d H:i:s')
+    ];
+}
+
+/**
+ * Obtener color según el modo
+ */
+function getModoColor($modo) {
+    switch ($modo) {
+        case 0: return '#007bff'; // Azul - Recursos Internos
+        case 1: return '#28a745'; // Verde - Subcontratado
+        default: return '#6c757d'; // Gris - No Definido
+    }
 }
 
 /**

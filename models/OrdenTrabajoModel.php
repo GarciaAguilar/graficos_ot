@@ -53,5 +53,27 @@ class OrdenTrabajoModel extends BaseModel {
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    
+    /**
+     * Obtener órdenes por modo (recursos internos vs externos)
+     */
+    public function getOrdenesPorModo() {
+        $query = "SELECT 
+                    modo,
+                    COUNT(*) as cantidad,
+                    CASE modo 
+                        WHEN 0 THEN 'Recursos Internos'
+                        WHEN 1 THEN 'Subcontratado'
+                        ELSE 'No Definido'
+                    END as modo_nombre
+                FROM {$this->table} 
+                WHERE eliminado_por IS NULL
+                GROUP BY modo, modo_nombre
+                ORDER BY modo";
+        
+        $stmt = $this->db->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }   
 ?>
