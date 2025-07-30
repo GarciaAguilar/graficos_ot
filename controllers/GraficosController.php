@@ -28,6 +28,10 @@ try {
         case 'ordenes-por-modo':
             $result = handleOrdenesPorModo($model);
             break;
+            
+        case 'evolucion-estados':
+            $result = handleEvolucionEstados($model);
+            break;
         
         default:
             throw new Exception('Acción no válida: ' . $action);
@@ -127,6 +131,88 @@ function handleOrdenesPorModo($model) {
         'chart_type' => 'pie',
         'timestamp' => date('Y-m-d H:i:s')
     ];
+}
+
+/**
+ * Manejar gráfico de evolución de estados a lo largo del tiempo
+ */
+function handleEvolucionEstados($model) {
+    // Obtener el período solicitado (por defecto 'dia')
+    $periodo = $_GET['periodo'] ?? 'dia';
+    $datos = $model->getEvolucionEstados($periodo);
+    
+    if (empty($datos)) {
+        throw new Exception('No se encontraron datos de evolución de estados');
+    }
+    
+    // Organizar datos para el gráfico de líneas/stacked bar
+    $series = [];
+    $categorias = [];
+    $estadosMap = [];
+    
+    // Procesar datos
+    foreach ($datos as $item) {
+        $periodo = $item['periodo'];
+        $estado = $item['estado_ot'];
+        $estadoNombre = $item['estado_nombre'];
+        $cantidad = (int) $item['cantidad'];
+        
+        // Agregar período a categorías si no existe
+        if (!in_array($periodo, $categorias)) {
+            $categorias[] = $periodo;
+        }
+        
+        // Inicializar serie para este estado si no existe
+        if (!isset($estadosMap[$estado])) {
+            $estadosMap[$estado] = [
+                'name' => $estadoNombre,
+                'data' => [],
+                'color' => getEstadoColor($estado)
+            ];
+        }
+        
+        // Agregar dato a la serie
+        $estadosMap[$estado]['data'][$periodo] = $cantidad;
+    }
+    
+    // Completar datos faltantes con 0
+    foreach ($estadosMap as $estado => &$serie) {
+        $datosCompletos = [];
+        foreach ($categorias as $cat) {
+            $datosCompletos[] = $serie['data'][$cat] ?? 0;
+        }
+        $serie['data'] = $datosCompletos;
+    }
+    
+    // Convertir a array indexado
+    $series = array_values($estadosMap);
+    
+    return [
+        'success' => true,
+        'data' => $series,
+        'categories' => $categorias,
+        'chart_type' => 'line',
+        'periodo' => $periodo,
+        'timestamp' => date('Y-m-d H:i:s')
+    ];
+}
+
+/**
+ * Obtener color según el estado de OT
+ */
+function getEstadoColor($estado) {
+    switch ($estado) {
+        case 1: return '#6c757d'; // Gris - Sin asignar
+        case 2: return '#17a2b8'; // Cyan - Asignado
+        case 3: return '#007bff'; // Azul - En proceso
+        case 4: return '#ffc107'; // Amarillo - En pausa
+        case 5: return '#fd7e14'; // Naranja - Apoyo solicitado
+        case 6: return '#e83e8c'; // Rosa - Esperando aprobación
+        case 7: return '#28a745'; // Verde - Finalizado
+        case 8: return '#dc3545'; // Rojo - Rechazado
+        case 9: return '#343a40'; // Negro - Eliminado
+        default: return '#6c757d'; // Gris por defecto
+    }
 }
 
 /**
