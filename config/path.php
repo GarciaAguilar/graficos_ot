@@ -29,6 +29,7 @@ define('ASSETS_PATH', PUBLIC_PATH . '/assets');
 
 // URLs para el navegador
 define('PUBLIC_URL', BASE_URL . 'public/');
+define('SCRIPTS_URL', PUBLIC_URL . 'scripts/');
 define('ASSETS_URL', PUBLIC_URL . 'assets/');
 define('CSS_URL', ASSETS_URL . 'css/');
 define('JS_URL', ASSETS_URL . 'js/');
@@ -63,6 +64,13 @@ function asset($path = '') {
     $baseUrl = defined('BASE_URL_OVERRIDE') ? BASE_URL_OVERRIDE : BASE_URL;
     $assetsUrl = rtrim($baseUrl, '/') . '/public/assets/';
     return $assetsUrl . ltrim($path, '/');
+}
+
+// Helper para scripts
+function script($path = '') {
+    $baseUrl = defined('BASE_URL_OVERRIDE') ? BASE_URL_OVERRIDE : BASE_URL;
+    $scriptsUrl = rtrim($baseUrl, '/') . '/public/scripts/';
+    return $scriptsUrl . ltrim($path, '/');
 }
 
 ?>
