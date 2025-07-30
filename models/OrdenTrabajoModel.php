@@ -123,5 +123,28 @@ class OrdenTrabajoModel extends BaseModel {
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    
+    /**
+     * Obtener eficacia de órdenes (Finalizadas vs Rechazadas)
+     */
+    public function getEficaciaOrdenes() {
+        $query = "SELECT 
+                    estado_ot,
+                    COUNT(*) as cantidad,
+                    CASE estado_ot 
+                        WHEN 7 THEN 'Finalizadas'
+                        WHEN 8 THEN 'Rechazadas'
+                        ELSE 'Otro'
+                    END as estado_nombre
+                FROM {$this->table} 
+                WHERE eliminado_por IS NULL 
+                  AND estado_ot IN (7, 8)
+                GROUP BY estado_ot, estado_nombre
+                ORDER BY estado_ot";
+        
+        $stmt = $this->db->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }   
 ?>

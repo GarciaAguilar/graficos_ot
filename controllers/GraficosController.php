@@ -32,6 +32,10 @@ try {
         case 'evolucion-estados':
             $result = handleEvolucionEstados($model);
             break;
+            
+        case 'eficacia-ordenes':
+            $result = handleEficaciaOrdenes($model);
+            break;
         
         default:
             throw new Exception('Acción no válida: ' . $action);
@@ -134,6 +138,71 @@ function handleOrdenesPorModo($model) {
 }
 
 /**
+ * Manejar gráfico de eficacia de órdenes (Finalizadas vs Rechazadas)
+ */
+function handleEficaciaOrdenes($model) {
+    $datos = $model->getEficaciaOrdenes();
+    
+    if (empty($datos)) {
+        throw new Exception('No se encontraron datos de eficacia de órdenes');
+    }
+    
+    // Calcular totales y porcentajes para KPIs
+    $finalizadas = 0;
+    $rechazadas = 0;
+    $chartData = [];
+    
+    foreach ($datos as $item) {
+        $cantidad = (int) $item['cantidad'];
+        if ($item['estado_ot'] == 7) { // Finalizadas
+            $finalizadas = $cantidad;
+        } elseif ($item['estado_ot'] == 8) { // Rechazadas
+            $rechazadas = $cantidad;
+        }
+        
+        $chartData[] = [
+            'name' => $item['estado_nombre'],
+            'y' => $cantidad,
+            'estado_id' => (int) $item['estado_ot'],
+            'color' => getEficaciaColor((int) $item['estado_ot'])
+        ];
+    }
+    
+    $total = $finalizadas + $rechazadas;
+    $eficacia = $total > 0 ? round(($finalizadas / $total) * 100, 1) : 0;
+    $rechazo = $total > 0 ? round(($rechazadas / $total) * 100, 1) : 0;
+    
+    return [
+        'success' => true,
+        'data' => $chartData,
+        'total' => $total,
+        'finalizadas' => $finalizadas,
+        'rechazadas' => $rechazadas,
+        'eficacia_porcentaje' => $eficacia,
+        'rechazo_porcentaje' => $rechazo,
+        'chart_type' => 'donut',
+        'kpis' => [
+            'eficacia' => $eficacia,
+            'aceptacion' => $eficacia,
+            'rechazo' => $rechazo,
+            'total_procesadas' => $total
+        ],
+        'timestamp' => date('Y-m-d H:i:s')
+    ];
+}
+
+/**
+ * Obtener color según el resultado de eficacia
+ */
+function getEficaciaColor($estado) {
+    switch ($estado) {
+        case 7: return '#28a745'; // Verde - Finalizadas (éxito)
+        case 8: return '#dc3545'; // Rojo - Rechazadas (fallo)
+        default: return '#6c757d'; // Gris por defecto
+    }
+}
+
+/**
  * Manejar gráfico de evolución de estados a lo largo del tiempo
  */
 function handleEvolucionEstados($model) {
@@ -198,7 +267,7 @@ function handleEvolucionEstados($model) {
 }
 
 /**
- * Obtener color según el estado de OT
+ * Obtener color según el estado de OT - Evolución de estados
  */
 function getEstadoColor($estado) {
     switch ($estado) {
@@ -216,7 +285,7 @@ function getEstadoColor($estado) {
 }
 
 /**
- * Obtener color según el modo
+ * Obtener color según el modo - Ordenes por modo
  */
 function getModoColor($modo) {
     switch ($modo) {
@@ -227,7 +296,7 @@ function getModoColor($modo) {
 }
 
 /**
- * Obtener color según la prioridad
+ * Obtener color según la prioridad - Ordenes por prioridad
  */
 function getPrioridadColor($prioridad) {
     switch ($prioridad) {
