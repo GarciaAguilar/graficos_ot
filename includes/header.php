@@ -40,21 +40,39 @@ require_once realpath(dirname(__DIR__)) . DIRECTORY_SEPARATOR . 'config' . DIREC
             </div>
             <ul class="menu">
                 <li class="menu-item menu-item-static active">
-                    <a href="#" class="menu-link">
+                    <a href="<?= url('views/dashboard.php') ?>" class="menu-link">
                         <i class='bx bx-home-alt-2'></i>
                         <span>Inicio</span>
                     </a>
                 </li>
                 <li class="menu-item menu-item-static">
-                    <a href="#" class="menu-link">
+                    <a href="<?= url('views/grafico1.php') ?>" class="menu-link">
                         <i class='bx bx-pie-chart-alt-2'></i>
                         <span>Gráfico 1</span>
                     </a>
                 </li>
                 <li class="menu-item menu-item-static">
-                    <a href="#" class="menu-link">
+                    <a href="<?= url('views/grafico2.php') ?>" class="menu-link">
                         <i class='bx bx-pie-chart-alt-2'></i>
                         <span>Gráfico 2</span>
+                    </a>
+                </li>
+                <li class="menu-item menu-item-static">
+                    <a href="<?= url('views/grafico3.php') ?>" class="menu-link">
+                        <i class='bx bx-pie-chart-alt-2'></i>
+                        <span>Gráfico 3</span>
+                    </a>
+                </li>
+                <li class="menu-item menu-item-static">
+                    <a href="<?= url('views/grafico4.php') ?>" class="menu-link">
+                        <i class='bx bx-pie-chart-alt-2'></i>
+                        <span>Gráfico 4</span>
+                    </a>
+                </li>
+                <li class="menu-item menu-item-static">
+                    <a href="<?= url('views/grafico5.php') ?>" class="menu-link">
+                        <i class='bx bx-pie-chart-alt-2'></i>
+                        <span>Gráfico 5</span>
                     </a>
                 </li>
             </ul>
