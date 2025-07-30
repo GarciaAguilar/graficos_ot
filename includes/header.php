@@ -51,13 +51,13 @@ require_once realpath(dirname(__DIR__)) . DIRECTORY_SEPARATOR . 'config' . DIREC
                 </li>
                 <li class="menu-item menu-item-static">
                     <a href="<?= url('views/grafico1.php') ?>" class="menu-link">
-                        <i class='bx bx-pie-chart-alt-2'></i>
+                        <i class='bx bx-pie-chart'></i>
                         <span>Gráfico 1</span>
                     </a>
                 </li>
                 <li class="menu-item menu-item-static">
                     <a href="<?= url('views/grafico2.php') ?>" class="menu-link">
-                        <i class='bx bx-pie-chart-alt-2'></i>
+                        <i class='bx bx-bar-chart-alt-2' ></i>
                         <span>Gráfico 2</span>
                     </a>
                 </li>
@@ -69,13 +69,13 @@ require_once realpath(dirname(__DIR__)) . DIRECTORY_SEPARATOR . 'config' . DIREC
                 </li>
                 <li class="menu-item menu-item-static">
                     <a href="<?= url('views/grafico4.php') ?>" class="menu-link">
-                        <i class='bx bx-pie-chart-alt-2'></i>
+                        <i class='bx bx-line-chart'></i>
                         <span>Gráfico 4</span>
                     </a>
                 </li>
                 <li class="menu-item menu-item-static">
                     <a href="<?= url('views/grafico5.php') ?>" class="menu-link">
-                        <i class='bx bx-pie-chart-alt-2'></i>
+                        <i class='bx bx-doughnut-chart'></i>
                         <span>Gráfico 5</span>
                     </a>
                 </li>
