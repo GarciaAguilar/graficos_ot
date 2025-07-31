@@ -1,6 +1,6 @@
 $(function () {
     function cargarGrafico() {
-        $('#container').html('<div class="text-center"><i class="fas fa-spinner fa-spin"></i> Cargando datos...</div>');
+        $('#container').html('<div class="text-center"><i class="bx bx-loader"></i> Cargando datos...</div>');
         $.ajax({
             url: '../controllers/GraficosController.php?action=ordenes-por-tipo',
             method: 'GET',
